@@ -17,4 +17,14 @@ const router = new VueRouter({
     { path: '/home', component: Home }
   ]
 })
+// 挂载路由导航守卫
+router.beforeEach((to, form, next) => {
+// to表示将要访问的路径，from表示从哪里来，next是下一个要做的操作
+  if (to.path === '/login') return next()
+  // 读取sessionStorage中的token
+  const tokenStr = window.sessionStorage.getItem('token')
+  // 没有token 就返回登录页
+  if (!tokenStr) return next('/login')
+  next()
+})
 export default router

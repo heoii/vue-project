@@ -1,8 +1,18 @@
 <template>
-   <div>
-        this is home
-        <el-button type="info" @click="logout"> 退出 </el-button>
-    </div>
+  <div>
+    <el-container class="home-container">
+      <!-- 头部区域 -->
+      <el-header>
+        Header
+      <el-button type="info" @click="logout">退出</el-button>
+      </el-header>
+    <el-container>
+      <el-aside>
+
+      </el-aside>
+    </el-container>
+    </el-container>
+  </div>
 </template>
 
 <script>

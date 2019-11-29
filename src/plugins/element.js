@@ -7,7 +7,7 @@ import {
   Message
 } from 'element-ui'
 
-// 进行全局挂载
+// 进行全局挂载 $后面的名字可以任意
 Vue.prototype.$message = Message
 
 Vue.use(Button)

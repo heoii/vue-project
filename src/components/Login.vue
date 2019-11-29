@@ -7,7 +7,7 @@
             <img src="../assets/logo.png" alt="">
         </div>
         <!-- label-width 是占位的 -->
-        <!-- 登录表单 element-ui内置属性 ref :model 绑定表单数据对象  :rules 表单验证规则  -->
+        <!-- 登录表单 element-ui内置属性  :model 绑定表单数据对象  :rules 表单验证规则  -->
         <el-form ref="LoginFormRef" :model="loginForm" label-width="0px" class="login_form" :rules="loginFormRules">
           <!-- 用户名  校验时绑定 prop  属性-->
           <el-form-item prop="username">
@@ -64,6 +64,7 @@ export default {
     resetLoginForm () {
       // this是当前组件对象，其中的属性$refs包含了设置的表单ref
       // cosole.log(this)
+      // $refs用来访问子组件实例或子元素 与 ref搭配使用 不是动态绑定 vue用法
       this.$refs.LoginFormRef.resetFields()
     },
     login () {
@@ -82,9 +83,9 @@ export default {
           // console.log("登录失败:"+res.meta.msg)
         }
         // 报错信息 关键字后面要加空格，return 后面不能空着
-        this.$message.success('登录成功')
+        this.$message.success({ message: '登录成功', duration: 1000 })
         console.log(res)
-        // 保存token
+        // 保存token 用sessionStorage在会话结束就会失效
         window.sessionStorage.setItem('token', res.data.token)
         // 使用编程式导航，跳转到后台主页
         this.$router.push('/home')
