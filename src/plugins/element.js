@@ -22,11 +22,13 @@ import {
   Switch,
   Tooltip,
   Dialog,
-  Pagination
+  Pagination,
+  MessageBox
 } from 'element-ui'
 
 // 进行全局挂载 $后面的名字可以任意
 Vue.prototype.$message = Message
+Vue.prototype.$confirm = MessageBox.confirm
 
 Vue.use(Button)
 Vue.use(Form)
