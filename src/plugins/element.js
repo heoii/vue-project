@@ -23,7 +23,11 @@ import {
   Tooltip,
   Dialog,
   Pagination,
-  MessageBox
+  MessageBox,
+  Tag,
+  Tree,
+  Select,
+  Option
 } from 'element-ui'
 
 // 进行全局挂载 $后面的名字可以任意
@@ -52,3 +56,7 @@ Vue.use(Table)
 Vue.use(Switch)
 Vue.use(TableColumn)
 Vue.use(Pagination)
+Vue.use(Tag)
+Vue.use(Tree)
+Vue.use(Select)
+Vue.use(Option)

@@ -12,6 +12,10 @@ import Home from '../components/Home.vue'
 import Welcome from '../components/Welcome.vue'
 // 导入用户页面
 import Users from '../components/Users.vue'
+// 导入权限管理页面
+import Rights from '../components/Rights.vue'
+// 导入角色列表
+import Roles from '../components/Roles.vue'
 
 Vue.use(VueRouter)
 const router = new VueRouter({
@@ -32,6 +36,14 @@ const router = new VueRouter({
         {
           path: '/users',
           component: Users
+        },
+        {
+          path: '/rights',
+          component: Rights
+        },
+        {
+          path: '/roles',
+          component: Roles
         }
       ]
     }
@@ -43,6 +55,7 @@ router.beforeEach((to, form, next) => {
   if (to.path === '/login') return next()
   // 读取sessionStorage中的token
   const tokenStr = window.sessionStorage.getItem('token')
+
   // 没有token 就返回登录页
   if (!tokenStr) return next('/login')
   next()

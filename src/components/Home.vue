@@ -32,11 +32,7 @@
           <div class="hiddenBtn" @click="isHidden">|||</div>
           <!-- 一级菜单 -->
           <!-- index 进行动态绑定：index  index规定为字符串 所以用+来隐式转换数据类型 -->
-          <el-submenu
-            :index="item.id + ''"
-            v-for="item in menuList"
-            :key="item.id"
-          >
+          <el-submenu :index="item.id + ''" v-for="item in menuList" :key="item.id">
             <!-- 一级菜单模板 -->
             <template slot="title">
               <!-- 图标 设置对象通过id来动态绑定字体图标-->
@@ -46,10 +42,10 @@
             </template>
             <!-- 二级子菜单 开启菜单的路由导航后  利用index设置路由地址-->
             <el-menu-item
-              :index="'/' + subItem.path"
+              :index="'/'+subItem.path"
               v-for="subItem in item.children"
               :key="subItem.id"
-              @click="saveActivePath('/' + subItem.path)"
+              @click="saveActivePath('/'+subItem.path)"
             >
               <!-- 二级菜单模板 -->
               <template slot="title">
