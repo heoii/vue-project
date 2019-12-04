@@ -5,6 +5,7 @@ import router from './router/index.js'
 import './plugins/element.js'
 import './assets/css/global.css'
 import './assets/fonts/iconfont.css'
+import TreeTable from 'vue-table-with-tree-grid'
 // 导入axios以发送ajax请求
 import axios from 'axios'
 // 挂载axios
@@ -18,28 +19,31 @@ axios.interceptors.request.use(config => {
   return config
 })
 Vue.config.productionTip = false
+// 全局注册组件
+Vue.component('tree-table', TreeTable)
 
 new Vue({
-  data: {
-    path: ''
-  },
-  //  popstate 浏览器返回事件
-  mounted() {
-    window.addEventListener(
-      'popstate',
-      () => {
-        // 设置这个 activePath  能记录自己的走向 返回会自动打开上一次的路径
-        window.sessionStorage.setItem('activePath', this.path)
-        window.location.reload()
-      },
-      false
-    )
-  },
+  // data: {
+  //   path: ''
+  // },
+  // watch: {
+  //   $route(to, from) {
+  //     this.path = to.path
+  //   }
+  // },
+  // //  popstate 浏览器返回事件
+  // mounted() {
+  //   window.addEventListener(
+  //     'popstate',
+  //     () => {
+  //       // 设置这个 activePath  能记录自己的走向 返回会自动打开上一次的路径
+  //       // 改当前路径
+  //       window.sessionStorage.setItem('activePath', this.path)
+  //       window.location.reload()
+  //     },
+  //     false
+  //   )
+  // },
   router,
-  render: h => h(App),
-  watch: {
-    $route(to, from) {
-      this.path = to.path
-    }
-  }
+  render: h => h(App)
 }).$mount('#app')
