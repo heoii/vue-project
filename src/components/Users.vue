@@ -13,7 +13,7 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
-            <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="findUserList"></el-button>
           </el-input>
         </el-col>
         <el-col :span="4">
@@ -56,7 +56,12 @@
             <!-- :enterable 显示离开后不显示 -->
             <el-tooltip content="分配角色" placement="top" :enterable="false">
               <!-- 设置 -->
-              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+              <el-button
+                type="warning"
+                icon="el-icon-setting"
+                size="mini"
+                @click="setRole(scope.row)"
+              ></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -124,6 +129,34 @@ width(设置对话框的宽度)
         <el-button type="primary" @click="editUser">确定</el-button>
       </span>
     </el-dialog>
+    <!-- 分配角色对话框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoleDialogVisible"
+      width="50%"
+      @close="setRoleDialogClosed"
+    >
+      <div>
+        <p>当前用户：{{userInfo.username}}</p>
+        <p>当前角色：{{userInfo.role_name}}</p>
+        <p>
+          分配的新角色
+          <el-select v-model="selectedRoleId" placeholder="请选择角色">
+            <!-- :label 显示文本 ：value 选中值 -->
+            <el-option
+              :key="item.id"
+              v-for="item in rolesList"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoleDialogVisible=false">取消</el-button>
+        <el-button type="primary" @click="saveRoleInfo">确定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -160,12 +193,20 @@ export default {
       },
       // 保存请求回来的用户列表数据
       userList: [],
-      // 初始化总页数为0
+      // 初始化总条数为0
       total: 0,
       // 是否显示添加用户弹出窗
       addDialogVisible: false,
       // 是否显示编辑用户弹出框
       editDialogVisible: false,
+      // 是否显示分配角色弹出框
+      setRoleDialogVisible: false,
+      // 保存正在操作的那个用户信息
+      userInfo: {},
+      // 保存所以的角色信息
+      rolesList: [],
+      // 保存用户选中的角色id
+      selectedRoleId: '',
       // 添加用户的表单数据
       addForm: {
         username: '',
@@ -242,14 +283,67 @@ export default {
     this.getUserList()
   },
   methods: {
-    async getUserList() {
-      // 发送请求获取用户列表数据
+    // 提交分配角色信息
+    async saveRoleInfo() {
+      // 当用户点击确定按钮之后
+      // 判断用户是否选择了需要分配的角色
+      if (!this.selectedRoleId) {
+        return this.$message.error('请选择需要分配的角色')
+      }
+      // 发送完成分配角色的操作
+      const { data: res } = await this.$http.put(
+        `users/${this.userInfo.id}/role`,
+        { rid: this.selectedRoleId }
+      )
+      // 判断如果删除失败，就做提示
+      if (res.meta.status !== 200) return this.$message.error('分配角色失败')
+      this.$message.success('分配角色成功')
+      this.getUserList()
+      // 关闭对话框
+      this.setRoleDialogVisible = false
+    },
+    setRoleDialogClosed() {
+      // 当关闭对话框的时候，重置下拉框中的内容
+      this.selectedRoleId = ''
+      this.userInfo = {}
+    },
+    // 分配用户角色
+    async setRole(userInfo) {
+      // 保存起来以供后续使用
+      this.userInfo = userInfo
+      // 获取收有角色信息，以备下拉列表使用
+      const { data: res } = await this.$http.get('roles')
+      // 判断是否获取成功
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取角色列表失败')
+      }
+      this.rolesList = res.data
+      // 显示角色分配对话框
+      this.setRoleDialogVisible = true
+    },
+    // 查找用户
+    async findUserList() {
+      // 从第一页开始查 不然后面的会查不到
+      this.queryInfo.pagenum = 1
       const { data: res } = await this.$http.get('users', {
         params: this.queryInfo
       })
       // 如果返回状态为异常状态则报错并返回
       if (res.meta.status !== 200) {
         this.$message.err('获取用户列表失败')
+      }
+      // 如果返回状态正常，将请求的数据保存在data中
+      this.userList = res.data.users
+      this.total = res.data.total
+    },
+    // 发送请求获取用户列表数据
+    async getUserList() {
+      const { data: res } = await this.$http.get('users', {
+        params: this.queryInfo
+      })
+      // 如果返回状态为异常状态则报错并返回
+      if (res.meta.status !== 200) {
+        this.$message.error('获取用户列表失败')
       }
       // 如果返回状态正常，将请求的数据保存在data中
       this.userList = res.data.users
@@ -289,7 +383,6 @@ export default {
       this.addDialogVisible = true
     },
     async showEditDialog(id) {
-      this.editDialogVisible = true
       // 发送请求根据id获取用户信息
       const { data: res } = await this.$http.get('users/' + id)
       // 判断是否添加成功
@@ -372,6 +465,9 @@ export default {
       if (res.meta.status !== 200) return this.$message.error('删除用户失败')
       // 修改成功的提示
       this.$message.success('删除用户成功')
+      // 判断是否向前一页
+      const lostPage = this.total % this.queryInfo.pagesize
+      if (lostPage === 1) --this.queryInfo.pagenum
       // 重新请求最新的数据
       this.getUserList()
     }
