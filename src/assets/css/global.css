@@ -17,3 +17,7 @@ body,
 .el-table {
   margin-top: 20px;
 }
+/* 设置级联框的样式 */
+.el-cascader-panel {
+  height: 300px !important;
+}

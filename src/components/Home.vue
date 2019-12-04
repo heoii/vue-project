@@ -2,7 +2,7 @@
   <el-container class="home-container">
     <!-- 头部区域 -->
     <el-header>
-      <div>
+      <div class="logoBar">
         <img src="../assets/logo.png" />
         <span>电商后台管理系统</span>
       </div>
@@ -16,7 +16,7 @@
               collapse-transition 是否开启折叠动画
               将el-menu的router属性设置为true就可以了，此时当我们点击二级菜单的时候，就会根据菜单的index
 属性进行路由跳转
-             default-active  默认活跃栏
+             default-active  默认活跃栏  $route.path 这个内置属性，可以在不刷新的情况下改变侧边栏的显示
         -->
         <el-menu
           unique-opened
@@ -25,7 +25,7 @@
           active-text-color="#409EFF"
           :collapse="isCollapse"
           :collapse-transition="false"
-          :default-active="activePath"
+          :default-active="$route.path"
           router
         >
           <!-- 侧边栏是否展开按钮 -->
@@ -83,17 +83,17 @@ export default {
       },
       isCollapse: false,
       // 锁定选择栏
-      activePath: '/users'
+      activePath: ''
     }
   },
   created() {
-    // 在created阶段请求左侧菜单数据
+    // 在created阶段请求左侧菜单数据  显示当前路径
     this.getMenuList()
   },
   methods: {
     logout() {
       window.sessionStorage.clear()
-      this.$router.push('/login')
+      // this.$router.push('/login')
     },
     async getMenuList() {
       const { data: res } = await this.$http.get('menus')
@@ -103,11 +103,12 @@ export default {
     },
     isHidden() {
       this.isCollapse = !this.isCollapse
-    },
-    saveActivePath(path) {
-      window.sessionStorage.setItem('activePath', path)
-      this.activePath = path
     }
+    // // 存当前路径
+    // saveActivePath(path) {
+    //   this.activePath = path
+    //   window.sessionStorage.setItem('activePath', this.activePath)
+    // }
   }
 }
 </script>
@@ -121,10 +122,27 @@ export default {
   }
 }
 .el-header {
+  width: 100%;
   background-color: #373d41;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .logoBar {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    img {
+      height: 100%;
+    }
+    span {
+      display: inline-block;
+      margin-top: 30px;
+      margin-left: 20px;
+      height: 60px;
+      color: #fff;
+      font-size: 20px;
+    }
+  }
 }
 .el-aside {
   background-color: #333744;
