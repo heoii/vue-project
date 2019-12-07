@@ -16,7 +16,6 @@
           <span>选择商品分类：</span>
           <!-- 选择商品分类的级联选择框 -->
           <el-cascader
-            expandTrigger="hover"
             v-model="selectedCateKeys"
             :options="cateList"
             :props="cateProps"
@@ -37,7 +36,33 @@
           <!-- 动态参数表格 -->
           <el-table :data="dynamicsTableData" border stripe>
             <!-- 展开行 -->
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-tag
+                  :key="i"
+                  v-for="(item,i) in scope.row.attr_vals"
+                  closable
+                  @close="handleClose(i,scope.row)"
+                >{{item}}</el-tag>
+                <!-- 输入框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                ></el-input>
+                <!-- 添加按钮 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                >+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <!--  索引列 -->
             <el-table-column type="index"></el-table-column>
             <!-- 参数列 -->
@@ -71,7 +96,33 @@
           >添加属性</el-button>
           <el-table :data="staticTableData" border stripe>
             <!-- 展开行 -->
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-tag
+                  :key="i"
+                  v-for="(item,i) in scope.row.attr_vals"
+                  closable
+                  @close="handleClose(i,scope.row)"
+                >{{item}}</el-tag>
+                <!-- 输入框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                ></el-input>
+                <!-- 添加按钮 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                >+ New Tag</el-button>
+              </template>
+            </el-table-column>
             <!-- 索引列 -->
             <el-table-column type="index"></el-table-column>
             <!-- 属性列 -->
@@ -174,7 +225,8 @@ export default {
       cateProps: {
         value: 'cat_id',
         label: 'cat_name',
-        children: 'children'
+        children: 'children',
+        expandTrigger: 'hover'
       }
     }
   },
@@ -182,6 +234,55 @@ export default {
     this.getCateList()
   },
   methods: {
+    // 展开行输入框的触发事件
+    // 当用户在文本框中按下enter键或者焦点离开时都会触发执行
+    handleInputConfirm(row) {
+      // 判断用户在文本框中输入的内容是否合法
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = ''
+        row.inputVisible = false
+        return
+      }
+      // 如果用户输入了真实合法的数据，需要保存起来
+      row.attr_vals.push(row.inputValue.trim())
+      row.inputValue = ''
+      row.inputVisible = false
+
+      this.saveAttrVals(row)
+    },
+    // 保存添加的展开行
+    async saveAttrVals(row) {
+      // 封装函数，完成保存可选项的操作
+      // 发起请求，保存参数细项
+      const { data: res } = await this.$http.put(
+        `categories/${this.cateId}/attributes/${row.attr_id}`,
+        {
+          attr_name: row.attr_name,
+          attr_sel: row.attr_sel,
+          attr_vals: row.attr_vals.join(' ')
+        }
+      )
+      if (res.meta.status !== 200) {
+        return this.$message.error('修改参数项失败')
+      }
+      this.$message.success('修改参数项成功')
+    },
+    // 删除对应索引的参数可选项
+    handleClose(index, row) {
+      // 删除对应索引的参数可选项
+      row.attr_vals.splice(index, 1)
+      // 调用函数，完成保存可选项的操作
+      this.saveAttrVals(row)
+    },
+    // 展示输入框
+    showInput(row) {
+      row.inputVisible = true
+      // $nextTick:在页面上元素被重新渲染之后，调用回调函数的代码
+      this.$nextTick(_ => {
+        // 让文本框自动获得焦点
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
     // 删除参数框
     async removeParams(attrId) {
       const confirmRes = await this.$confirm(
@@ -257,7 +358,7 @@ export default {
             attr_vals: 'a,b,c'
           }
         )
-        console.log(res)
+        // console.log(res)
         if (res.meta.status !== 201) {
           return this.$message.error('添加' + this.titleText + '数据失败')
         }
@@ -280,10 +381,11 @@ export default {
     },
     async handleChange() {
       // 当用户在级联菜单中选择内容改变时触发
-      console.log(this.selectedCateKeys)
+      // console.log(this.selectedCateKeys)
       // 判断是否选择到第三级标签
       if (this.selectedCateKeys.length !== 3) {
-        this.selectedCateKeys = []
+        // 当输入框不是三级时,全部清空
+        this.selectedCateKeys = this.dynamicsTableData = this.staticTableData = []
         return
       }
       // 发送请求，根据用户选择的三级分类和面板获取参数数据
@@ -292,10 +394,18 @@ export default {
         { params: { sel: this.activeName } }
       )
       if (res.meta.status !== 200) {
-        console.log(res.meta)
+        // console.log(res.meta)
         return this.$message.error('获取参数列表数据失败')
       }
-      console.log(res.data)
+      // 给展开行添加信息
+      // console.log(res.data)
+      res.data.forEach(item => {
+        item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
+        // 添加一个bool值控制文本框的显示或者隐藏  不设置全局属性是为了区别不同展开行
+        item.inputVisible = false
+        // 添加一个inputValue保存文本框值
+        item.inputValue = ''
+      })
       if (this.activeName === 'many') {
         // 获取的是动态参数
         this.dynamicsTableData = res.data
@@ -306,7 +416,7 @@ export default {
     },
     // tab选项卡被点击
     handleTabClick() {
-      console.log(this.activeName)
+      // console.log(this.activeName)
       this.handleChange()
     },
     addDialogClosed() {
@@ -344,5 +454,11 @@ export default {
 // 设置级联选择框的宽度
 .el-cascader {
   width: 260px !important;
+}
+.el-tag {
+  margin: 10px;
+}
+.input-new-tag {
+  width: 50px;
 }
 </style>
