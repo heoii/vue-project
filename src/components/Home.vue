@@ -45,7 +45,6 @@
               :index="'/'+subItem.path"
               v-for="subItem in item.children"
               :key="subItem.id"
-              @click="saveActivePath('/'+subItem.path)"
             >
               <!-- 二级菜单模板 -->
               <template slot="title">

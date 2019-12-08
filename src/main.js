@@ -8,6 +8,15 @@ import './assets/fonts/iconfont.css'
 import TreeTable from 'vue-table-with-tree-grid'
 // 导入axios以发送ajax请求
 import axios from 'axios'
+// 导入vue-quill-editor（富文本编辑器）
+import VueQuillEditor from 'vue-quill-editor'
+// 导入vue-quill-editor的样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+// 全局注册富文本组件
+Vue.use(VueQuillEditor)
 // 挂载axios
 Vue.prototype.$http = axios
 // 设置请求的根路径
@@ -22,6 +31,20 @@ Vue.config.productionTip = false
 // 全局注册组件
 Vue.component('tree-table', TreeTable)
 
+// 时间格式化
+Vue.filter('dateFormat', v => {
+  let date = new Date(v)
+
+  let y = date.getFullYear() + ''
+  let m = (date.getMonth() + 1 + '').padStart(2, '0')
+  let d = (date.getDate() + '').padStart(2, '0')
+
+  let hh = (date.getHours() + '').padStart(2, '0')
+  let mm = (date.getMinutes() + '').padStart(2, '0')
+  let ss = (date.getSeconds() + '').padStart(2, '0')
+
+  return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+})
 new Vue({
   // data: {
   //   path: ''

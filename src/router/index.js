@@ -20,6 +20,10 @@ import Roles from '../components/Roles.vue'
 import Cate from '../components/goods/Cate.vue'
 // 导入商品参数
 import Params from '../components/goods/Params.vue'
+// 导入商品列表
+import GoodList from '../components/goods/List.vue'
+// 添加商品页面
+import GoodAdd from '../components/goods/Add.vue'
 
 Vue.use(VueRouter)
 const router = new VueRouter({
@@ -56,6 +60,14 @@ const router = new VueRouter({
         {
           path: '/params',
           component: Params
+        },
+        {
+          path: '/goods',
+          component: GoodList
+        },
+        {
+          path: '/goods/add',
+          component: GoodAdd
         }
       ]
     }
