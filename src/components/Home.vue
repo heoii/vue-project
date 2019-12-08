@@ -25,7 +25,7 @@
           active-text-color="#409EFF"
           :collapse="isCollapse"
           :collapse-transition="false"
-          :default-active="$route.path"
+          :default-active="$route.path === '/goods/add'? '/goods' :$route.path"
           router
         >
           <!-- 侧边栏是否展开按钮 -->
