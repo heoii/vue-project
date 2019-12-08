@@ -205,6 +205,8 @@ export default {
 
         // 将addForm进行深拷贝，避免goods_cat数组转换字符串之后导致级联选择器报错
         const form = _.cloneDeep(this.addForm)
+        // 要为attrs设置成数组类型
+        form.attrs = []
         // 将goods_cat从数组转换为"1,2,3"字符串形式
         form.goods_cat = form.goods_cat.join(',')
         // 处理attrs数组，数组中需要包含商品的动态参数和静态属性
@@ -223,6 +225,7 @@ export default {
         // 发送请求完成商品的添加,商品名称必须是唯一的
         const { data: res } = await this.$http.post('goods', form)
         if (res.meta.status !== 201) {
+          console.log(res.meta)
           return this.$message.error('添加商品失败')
         }
         this.$message.success('添加商品成功')
@@ -342,9 +345,7 @@ export default {
 .el-checkbox {
   margin: 0 40px 0 0;
 }
-.ql-editor {
-  min-height: 300px;
-}
+
 .btnAdd {
   margin-top: 20px;
 }

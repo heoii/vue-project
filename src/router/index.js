@@ -24,6 +24,8 @@ import Params from '../components/goods/Params.vue'
 import GoodList from '../components/goods/List.vue'
 // 添加商品页面
 import GoodAdd from '../components/goods/Add.vue'
+// 订单页面
+import Order from '../components/order/Order.vue'
 
 Vue.use(VueRouter)
 const router = new VueRouter({
@@ -68,6 +70,10 @@ const router = new VueRouter({
         {
           path: '/goods/add',
           component: GoodAdd
+        },
+        {
+          path: '/orders',
+          component: Order
         }
       ]
     }
