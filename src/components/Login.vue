@@ -1,35 +1,45 @@
 <template>
-<!-- 登录组件 -->
+  <!-- 登录组件 -->
   <div class="login_container">
     <div class="login_box">
       <!-- 头像区域 -->
-        <div class="avatar_box">
-            <img src="../assets/logo.png" alt="">
-        </div>
-        <!-- label-width 是占位的 -->
-        <!-- 登录表单 element-ui内置属性  :model 绑定表单数据对象  :rules 表单验证规则  -->
-        <el-form ref="LoginFormRef" :model="loginForm" label-width="0px" class="login_form" :rules="loginFormRules">
-          <!-- 用户名  校验时绑定 prop  属性-->
-          <el-form-item prop="username">
-            <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
-          </el-form-item>
-           <!-- 密码 -->
-          <el-form-item prop="password">
-            <el-input type="password" v-model="loginForm.password" prefix-icon="iconfont icon-3702mima"></el-input>
-          </el-form-item>
-          <!-- 按钮 -->
-          <el-form-item class="btns">
-          <el-button type="primary" @click="login">登录</el-button>
-            <el-button type="info" @click="resetLoginForm">重置</el-button>
-          </el-form-item>
-        </el-form>
+      <div class="avatar_box">
+        <img src="../assets/logo.png" alt />
       </div>
+      <!-- label-width 是占位的 -->
+      <!-- 登录表单 element-ui内置属性  :model 绑定表单数据对象  :rules 表单验证规则  -->
+      <el-form
+        ref="LoginFormRef"
+        :model="loginForm"
+        label-width="0px"
+        class="login_form"
+        :rules="loginFormRules"
+      >
+        <!-- 用户名  校验时绑定 prop  属性-->
+        <el-form-item prop="username">
+          <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
+        </el-form-item>
+        <!-- 密码 -->
+        <el-form-item prop="password">
+          <el-input
+            type="password"
+            v-model="loginForm.password"
+            prefix-icon="iconfont icon-3702mima"
+          ></el-input>
+        </el-form-item>
+        <!-- 按钮 -->
+        <el-form-item class="btns">
+          <el-button type="primary" @click="login">登录</el-button>
+          <el-button type="info" @click="resetLoginForm">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       // 绑定数据
       loginForm: {
@@ -61,16 +71,16 @@ export default {
   // 添加行为
   methods: {
     // 添加表单重置方法
-    resetLoginForm () {
+    resetLoginForm() {
       // this是当前组件对象，其中的属性$refs包含了设置的表单ref
       // cosole.log(this)
       // $refs用来访问子组件实例或子元素 与 ref搭配使用 不是动态绑定 vue用法
       this.$refs.LoginFormRef.resetFields()
     },
-    login () {
+    login() {
       // 点击登录的时候先调用validate方法验证表单内容是否有误
       this.$refs.LoginFormRef.validate(async valid => {
-        console.log(this.loginFormRules)
+        // console.log(this.loginFormRules)
         // 如果valid参数为true则验证通过
         if (!valid) {
           return
@@ -84,7 +94,7 @@ export default {
         }
         // 报错信息 关键字后面要加空格，return 后面不能空着
         this.$message.success({ message: '登录成功', duration: 1000 })
-        console.log(res)
+        // console.log(res)
         // 保存token 用sessionStorage在会话结束就会失效
         window.sessionStorage.setItem('token', res.data.token)
         // 使用编程式导航，跳转到后台主页

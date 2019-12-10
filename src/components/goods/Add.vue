@@ -84,7 +84,7 @@
           </el-tab-pane>
           <el-tab-pane label="商品图片" name="3">
             <!-- 商品图片上传
-              action:指定图片上传api接口 这里用绝对地址
+              :action:指定图片上传api接口 这里用绝对地址
               :on-preview ： 当点击图片时会触发该事件进行预览操作,处理图片预览
               :on-remove : 当用户点击图片右上角的X号时触发执行
               :on-success：当用户点击上传图片并成功上传时触发
@@ -112,7 +112,11 @@
     </el-card>
     <!-- 预览图片对话框 -->
     <el-dialog title="图片预览" :visible.sync="previewVisible" width="50%">
-      <img :src="previewPath" class="previewImg" width="100%" />
+      <el-carousel height="200px" type="card" :autoplay="false" ref="carousel">
+        <el-carousel-item v-for="(item,i) in previewPath" :key="i" name="i">
+          <img :src="item" class="previewImg" />
+        </el-carousel-item>
+      </el-carousel>
     </el-dialog>
   </div>
 </template>
@@ -130,7 +134,7 @@ export default {
         Authorization: window.sessionStorage.getItem('token')
       },
       // 保存预览图片的地址
-      previewPath: '',
+      previewPath: [],
       // 控制预览图片对话框的显示和隐藏
       previewVisible: false,
       // 动态参数列表
@@ -233,12 +237,24 @@ export default {
         this.$router.push('/goods')
       })
     },
+    // 手动切换幻灯片 setActiveItem(i)(Carousel Methods)
+    // 需要切换的幻灯片的索引，从 0 开始；或相应 el-carousel-item 的 name 属性值
+    // i 与 name 里面的值绑定 ，i 决定显示那个 name值的 el-carousel-item
+    setActiveItem(i) {
+      if (this.$refs.carousel) {
+        this.$refs.carousel.setActiveItem(i)
+        console.log(i)
+      }
+    },
     // 当用户点击图片进行预览时执行，处理图片预览
     handlePreview(file) {
       // 当用户点击图片进行预览时执行，处理图片预览
       // 形参file就是用户预览的那个文件  内置参数
-      console.log(file)
-      this.previewPath = file.response.data.url
+      // console.log(file)
+      const index = this.previewPath.findIndex(
+        item => item === file.response.data.url
+      )
+      this.setActiveItem(index)
       // 显示预览图片对话框
       this.previewVisible = true
     },
@@ -254,14 +270,16 @@ export default {
       )
       // 移除索引对应的图片
       this.addForm.picInfo.splice(index, 1)
+      this.previewPath.splice(index, 1)
     },
     // 当图片上传成功触发 自带返回的参数
     handleSuccess(res) {
       let pathObj = {
         filePath: res.data.tmp_path
       }
+      this.previewPath.push(res.data.url)
       this.addForm.picInfo.push(pathObj)
-      // console.log(this.addForm)
+      // console.log(this.previewPath)
     },
     // 点击切换tab栏时触发
     async tabClicked() {
@@ -345,7 +363,9 @@ export default {
 .el-checkbox {
   margin: 0 40px 0 0;
 }
-
+.previewImg {
+  width: 100%;
+}
 .btnAdd {
   margin-top: 20px;
 }

@@ -26,7 +26,8 @@ import GoodList from '../components/goods/List.vue'
 import GoodAdd from '../components/goods/Add.vue'
 // 订单页面
 import Order from '../components/order/Order.vue'
-
+// 数据报表
+import Report from '../components/report/Report.vue'
 Vue.use(VueRouter)
 const router = new VueRouter({
   routes: [
@@ -74,6 +75,10 @@ const router = new VueRouter({
         {
           path: '/orders',
           component: Order
+        },
+        {
+          path: '/reports',
+          component: Report
         }
       ]
     }

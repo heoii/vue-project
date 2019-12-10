@@ -232,14 +232,14 @@ export default {
         return this.$message.error('获取角色列表失败')
       }
       // 如果返回状态正常，将请求的数据保存在data中
-      console.log(res.data)
+      // console.log(res.data)
       this.rolesList = res.data
     },
     // 显示修改角色弹出框
     async showEditRoleDialog(id) {
       const { data: res } = await this.$http.get(`roles/${id}`)
       if (res.meta.status !== 200) {
-        console.log(res.meta)
+        // console.log(res.meta)
         return this.$message.error('获取权限失败')
       }
       // 将获取到的数据保存到数据editForm中
@@ -287,7 +287,7 @@ export default {
         )
         // 判断如果修改失败，就做提示
         if (res.meta.status !== 200) {
-          console.log(res.meta)
+          // console.log(res.meta)
           return this.$message.error('修改用户失败')
         }
         // 修改成功的提示
