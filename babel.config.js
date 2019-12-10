@@ -16,6 +16,9 @@ module.exports = {
         styleLibraryName: 'theme-chalk'
       }
     ],
-    ...productPlugins
+    // 发布阶段用到的插件组
+    ...productPlugins,
+    // 配置路由懒加载插件
+    '@babel/plugin-syntax-dynamic-import'
   ]
 }

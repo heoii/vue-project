@@ -17,7 +17,7 @@
       <!-- row-key="id" 是2019年3月提供的新特性，
       if there's nested data, rowKey is required.
       如果这是一个嵌套的数据，rowkey 是必须添加的属性-->
-      <el-table :data="rolesList" border stripe>
+      <el-table :data="rolesList" border stripe row-key="id">
         <!-- 添加展开列 -->
         <el-table-column type="expand">
           <template slot-scope="scope">

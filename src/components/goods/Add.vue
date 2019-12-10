@@ -229,7 +229,6 @@ export default {
         // 发送请求完成商品的添加,商品名称必须是唯一的
         const { data: res } = await this.$http.post('goods', form)
         if (res.meta.status !== 201) {
-          console.log(res.meta)
           return this.$message.error('添加商品失败')
         }
         this.$message.success('添加商品成功')
@@ -243,7 +242,6 @@ export default {
     setActiveItem(i) {
       if (this.$refs.carousel) {
         this.$refs.carousel.setActiveItem(i)
-        console.log(i)
       }
     },
     // 当用户点击图片进行预览时执行，处理图片预览
@@ -315,7 +313,6 @@ export default {
     async getCateList() {
       const { data: res } = await this.$http.get('/categories')
       if (res.meta.status !== 200) {
-        console.log(res.meta)
         return this.$message.error('获取商品列表失败')
       }
       this.cateList = res.data
