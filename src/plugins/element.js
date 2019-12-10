@@ -36,7 +36,9 @@ import {
   Step,
   CheckboxGroup,
   Checkbox,
-  Upload
+  Upload,
+  Carousel,
+  CarouselItem
 } from 'element-ui'
 import Timeline from './timeline/index.js'
 import TimelineItem from './timeline-item/index.js'
@@ -81,3 +83,5 @@ Vue.use(Checkbox)
 Vue.use(Upload)
 Vue.use(Timeline)
 Vue.use(TimelineItem)
+Vue.use(Carousel)
+Vue.use(CarouselItem)
