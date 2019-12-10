@@ -180,7 +180,6 @@ export default {
     // 级联选择器改变触发事件
     parentCateChange() {
       // 级联菜单中选择项发生变化时触发
-      console.log(this.selectedKeys)
       // 如果用户选择了父级分类
       if (this.selectedKeys.length > 0) {
         // 则将数组中的最后一项设置为父级分类
@@ -239,7 +238,6 @@ export default {
     },
     // 添加商品类别
     addCate() {
-      console.log(this.addCateForm)
       this.$refs.addCateFormRef.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.post(

@@ -367,7 +367,6 @@ export default {
     },
     async userStateChanged(row) {
       // 发送请求进行状态修改
-      console.log(row)
       const { data: res } = await this.$http.put(
         `users/${row.id}/state/${row.mg_state}`
       )
